@@ -1,3 +1,4 @@
+package Server;
 // import java.math.BigInteger;
 // import java.net.ServerSocket;
 // import java.util.Scanner;
@@ -20,7 +21,6 @@ public class Server {
                 System.out.println("Client connected");
                 DataInputStream in = new DataInputStream(sock.getInputStream());
                 DataOutputStream out = new DataOutputStream(sock.getOutputStream());
-                
             }
         }
         catch(IOException e) {}
