@@ -1,3 +1,5 @@
+package Expences;
+
 // в окне можно будет добавлять расходы
 // расходы будут транспортные, на материалы и на производство
 // каждый расход будет отображаться на экране
@@ -7,8 +9,9 @@
 // потом вычисляется общая сумма
 // у всех расходов должен быть метод возвращающий общую сумму расхода
 // у всех расходов должен быть метод для изменения значений
+import javafx.scene.layout.VBox;
 
-interface Expense {
-    public double getExpense();
-    public void edit();
+public interface Expense {
+    public VBox getElem();
+    // public VBox edit(VBox elem);
 }

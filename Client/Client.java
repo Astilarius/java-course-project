@@ -14,12 +14,11 @@ public class Client
         Socket sock = null; 
         try
         {
-            System.out.println("Connecting to server..."); 
-            sock = new Socket("localhost",12345); 
+            System.out.println("Connecting to server...");
+            sock = new Socket("localhost",12345);
             System.out.println("Connected");
             DataInputStream in = new DataInputStream(sock.getInputStream());
             DataOutputStream out = new DataOutputStream(sock.getOutputStream());
-
         }
         catch(IOException e) {}
     }

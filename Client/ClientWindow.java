@@ -1,55 +1,64 @@
 package Client;
+import Expences.Material;
+import Expences.Production;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.Node;
+// import javafx.scene.paint.Material;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import java.util.Collection;
+import java.util.ArrayList;
 public class ClientWindow extends Application {
     @Override
     public void start(Stage stage) {
-        
-    HBox root = new HBox();
-    root.setPadding(new Insets(10, 10, 10, 10));
+        Collection<Material> materials = new ArrayList<Material>();
+        Collection<Production> productions = new ArrayList<Production>();
+        Production.setCollections(materials, productions);
+        final Button materialButton = new Button("Add material");
+        final Button productionButton = new Button("Add production");
+        Integer currentId = 0;
+        final Pane leftButtonSpacer = new Pane();
+        final Pane rightButtonSpacer = new Pane();
+        HBox.setHgrow(leftButtonSpacer, Priority.ALWAYS);
+        HBox.setHgrow(rightButtonSpacer, Priority.ALWAYS);
+        leftButtonSpacer.setMinSize(10, 1);
+        rightButtonSpacer.setMinSize(10, 1);
 
-    final Button left = new Button("Left");
-    final Button center = new Button("Center");
-    final Button right = new Button("Right");
-    VBox leftBox = new VBox();
-    VBox centerBox = new VBox();
-    VBox rightBox = new VBox();
-    center.setOnMouseClicked(event -> {
-        Label l = new Label("Ы");
-        leftBox.getChildren().add(l);
-    });
+        HBox buttons = new HBox();
+        buttons.getChildren().add(materialButton);
+        buttons.getChildren().add(leftButtonSpacer);
+        buttons.getChildren().add(rightButtonSpacer);
+        buttons.getChildren().add(productionButton);
 
-    final Pane leftSpacer = new Pane();
-    final Pane rightSpacer = new Pane();
-    HBox.setHgrow(leftSpacer, Priority.ALWAYS);
-    HBox.setHgrow(rightSpacer, Priority.ALWAYS);
-    leftSpacer.setMinSize(10, 1);
-    rightSpacer.setMinSize(10, 1);
+        FlowPane body = new FlowPane();
+        body.setPadding(new Insets(10, 10, 10, 10));
+        materialButton.setOnMouseClicked(event -> {
+            VBox root2 = new VBox();
+            Stage stage2 = new Stage();
+            Material item = new Material(body, stage2, currentId);
+            root2.getChildren().addAll(item.getElem());
 
-    root.getChildren().addAll(leftBox, leftSpacer, center, rightSpacer, rightBox);
+            stage2.setTitle("Production Creator");
+            stage2.setScene(new Scene(root2));
+            stage2.show();
+        });
+        productionButton.setOnMouseClicked(event -> {
+            Production.CreateElem(body, stage);
+            stage.hide();
+        });
+        VBox root = new VBox(buttons, body);
+        root.setPadding(new Insets(10, 10, 10, 10));
 
-    stage.setScene(new Scene(root, 400, 400));
-    stage.show();
+        stage.setScene(new Scene(root, 700, 500));
+        stage.show();
     }
     public static void main(String[] args) {
         launch();
