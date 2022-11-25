@@ -6,10 +6,17 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Server",
+            "request": "launch",
+            "mainClass": "Server.Server",
+            "projectName": "java-course-project_4c3f2446"
+        },
+        {
+            "type": "java",
             "name": "Launch Client",
             "request": "launch",
             "mainClass": "Client.ClientWindow",
-            "vmArgs": "--module-path D:/VScode/javafx-sdk-19/lib --add-modules javafx.controls,javafx.fxml",
-        },
+            "vmArgs": "--module-path D:/VScode/javafx-sdk-19/lib --add-modules javafx.controls,javafx.fxml"
+        }
     ]
 }

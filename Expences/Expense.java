@@ -10,8 +10,11 @@ package Expences;
 // у всех расходов должен быть метод возвращающий общую сумму расхода
 // у всех расходов должен быть метод для изменения значений
 import javafx.scene.layout.VBox;
+import java.io.DataOutputStream;
+import java.util.Collection;
 
 public interface Expense {
     public VBox getElem();
+    public void sendToServer(DataOutputStream out);
     // public VBox edit(VBox elem);
 }

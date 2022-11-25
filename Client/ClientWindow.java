@@ -1,30 +1,44 @@
 package Client;
 import Expences.Material;
 import Expences.Production;
+import Expences.ProdResult;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.Node;
 // import javafx.scene.paint.Material;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import java.util.Collection;
 import java.util.ArrayList;
+import javafx.scene.input.KeyCode;
 public class ClientWindow extends Application {
     @Override
     public void start(Stage stage) {
         Collection<Material> materials = new ArrayList<Material>();
         Collection<Production> productions = new ArrayList<Production>();
+        Material.mainStage = stage;
+        Production.mainStage = stage;
         Production.setCollections(materials, productions);
+        Material.setCollections(materials, productions);
         final Button materialButton = new Button("Add material");
+        materialButton.setOnKeyPressed(event->{
+            KeyCode code = event.getCode();
+            if (code.name() == "ENTER"){
+                materialButton.fire();
+            }
+        });
         final Button productionButton = new Button("Add production");
-        Integer currentId = 0;
+        productionButton.setOnKeyPressed(event->{
+            KeyCode code = event.getCode();
+            if (code.name() == "ENTER"){
+                productionButton.fire();
+            }
+        });
         final Pane leftButtonSpacer = new Pane();
         final Pane rightButtonSpacer = new Pane();
         HBox.setHgrow(leftButtonSpacer, Priority.ALWAYS);
@@ -39,18 +53,14 @@ public class ClientWindow extends Application {
         buttons.getChildren().add(productionButton);
 
         FlowPane body = new FlowPane();
+        ProdResult finalRes = new ProdResult();
+        body.getChildren().add(finalRes.getProdRes());
         body.setPadding(new Insets(10, 10, 10, 10));
-        materialButton.setOnMouseClicked(event -> {
-            VBox root2 = new VBox();
-            Stage stage2 = new Stage();
-            Material item = new Material(body, stage2, currentId);
-            root2.getChildren().addAll(item.getElem());
-
-            stage2.setTitle("Production Creator");
-            stage2.setScene(new Scene(root2));
-            stage2.show();
+        materialButton.setOnAction(event -> {
+            Material.CreateElem(body, stage);
+            stage.hide();
         });
-        productionButton.setOnMouseClicked(event -> {
+        productionButton.setOnAction(event -> {
             Production.CreateElem(body, stage);
             stage.hide();
         });
