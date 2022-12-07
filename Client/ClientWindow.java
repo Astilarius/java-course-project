@@ -1,4 +1,5 @@
 package Client;
+import ProjectManager.ProjectManager;
 import Expences.Material;
 import Expences.Production;
 import Expences.ProdResult;
@@ -17,6 +18,8 @@ import java.util.Collection;
 import java.util.ArrayList;
 import javafx.scene.input.KeyCode;
 public class ClientWindow extends Application {
+    private VBox root = new VBox();
+    private FlowPane body = new FlowPane();;
     @Override
     public void start(Stage stage) {
         Collection<Material> materials = new ArrayList<Material>();
@@ -25,6 +28,11 @@ public class ClientWindow extends Application {
         Production.mainStage = stage;
         Production.setCollections(materials, productions);
         Material.setCollections(materials, productions);
+        final Button loadProject = new Button("load project");
+        loadProject.setOnAction(event->{
+            ProjectManager.manageServer(body, stage, materials, productions);
+            stage.hide();
+        });
         final Button materialButton = new Button("Add material");
         materialButton.setOnKeyPressed(event->{
             KeyCode code = event.getCode();
@@ -39,6 +47,12 @@ public class ClientWindow extends Application {
                 productionButton.fire();
             }
         });
+        String buttonColor = "d4d4d4";
+        String buttonBorderColor = "9c9c9c";
+        loadProject.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#"+buttonColor+";-fx-border-color:#"+buttonBorderColor+";");
+        materialButton.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#"+buttonColor+";-fx-border-color:#"+buttonBorderColor+";");
+        productionButton.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#"+buttonColor+";-fx-border-color:#"+buttonBorderColor+";");
+        
         final Pane leftButtonSpacer = new Pane();
         final Pane rightButtonSpacer = new Pane();
         HBox.setHgrow(leftButtonSpacer, Priority.ALWAYS);
@@ -47,12 +61,13 @@ public class ClientWindow extends Application {
         rightButtonSpacer.setMinSize(10, 1);
 
         HBox buttons = new HBox();
-        buttons.getChildren().add(materialButton);
+        buttons.getChildren().add(loadProject);
         buttons.getChildren().add(leftButtonSpacer);
         buttons.getChildren().add(rightButtonSpacer);
+        buttons.getChildren().add(materialButton);
         buttons.getChildren().add(productionButton);
 
-        FlowPane body = new FlowPane();
+        body = new FlowPane();
         ProdResult finalRes = new ProdResult();
         body.getChildren().add(finalRes.getProdRes());
         body.setPadding(new Insets(10, 10, 10, 10));
@@ -64,7 +79,7 @@ public class ClientWindow extends Application {
             Production.CreateElem(body, stage);
             stage.hide();
         });
-        VBox root = new VBox(buttons, body);
+        root = new VBox(buttons, body);
         root.setPadding(new Insets(10, 10, 10, 10));
 
         stage.setScene(new Scene(root, 700, 500));
@@ -72,5 +87,8 @@ public class ClientWindow extends Application {
     }
     public static void main(String[] args) {
         launch();
+    }
+    public void populate(String dataString) {
+        body.getChildren();
     }
 }

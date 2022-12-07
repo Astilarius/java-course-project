@@ -14,11 +14,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import java.util.Collection;
 import java.util.ArrayList;
-import javafx.scene.Node;
 import java.io.DataOutputStream;
 import java.io.IOException;
 public class Production implements Expense {
@@ -26,12 +26,21 @@ public class Production implements Expense {
     public static Collection<Production> productions;
     protected Collection<Expense> linked;
     static private Integer prodId = 0;
-    private Integer elemId;
+    private String elemId;
     private String name;
     private double pricePerUnit;
     private Integer amount;
     protected DragContext ctx;
     public static Stage mainStage;
+    public String getString(){
+        name = name.replace(" ", "_");
+        String result = "2 "+name+" "+pricePerUnit+" "+amount+" "+elemId+" ";
+        for (Expense e : linked){
+            result += e.getId()+"|"; 
+        }
+        result+=";";
+        return result;
+    }
     public static void setCollections(Collection<Material> newMats, Collection<Production> newProds){
         materials = newMats;
         productions = newProds;
@@ -44,10 +53,11 @@ public class Production implements Expense {
                 child.sendToServer(out);
                 System.out.println("sent child of "+name);
             }
-            out.writeInt(2);
-            out.writeUTF(name);
-            out.writeInt(amount);
-            out.writeDouble(pricePerUnit);
+            out.writeUTF(getString());
+            // out.writeInt(2);
+            // out.writeUTF(name);
+            // out.writeInt(amount);
+            // out.writeDouble(pricePerUnit);
         }
         catch(IOException e) {}
     }
@@ -57,14 +67,14 @@ public class Production implements Expense {
     public double getPricePerUnit(){
         return pricePerUnit;
     }
-    public Integer getId(){
+    public String getId(){
         return elemId;
     }
     public double getAmount(){
         return amount;
     }
     public Production(){
-        elemId = prodId;
+        elemId = "P"+prodId;
         prodId++;
         name = "";
         pricePerUnit = 0;
@@ -72,14 +82,23 @@ public class Production implements Expense {
         ctx = new DragContext();
         linked = new ArrayList<Expense>();
     }
-    private Production(String newName, Integer newAmount, Double newPricePerUnit){
-        elemId = prodId;
+    public Production(String newName, Integer newAmount, Double newPricePerUnit){
+        elemId = "P"+prodId;
         prodId++;
         name = newName;
         amount = newAmount;
         pricePerUnit = newPricePerUnit;
         ctx = new DragContext();
         linked = new ArrayList<Expense>();
+    }
+    public Production(String newName, Integer newAmount, Double newPricePerUnit, Collection<Expense> newLinked){
+        elemId = "P"+prodId;
+        prodId++;
+        name = newName;
+        amount = newAmount;
+        pricePerUnit = newPricePerUnit;
+        ctx = new DragContext();
+        linked = newLinked;
     }
     public VBox getElem(){
         VBox elem = new VBox();
@@ -88,65 +107,102 @@ public class Production implements Expense {
         Label l2 = new Label("amount - "+amount);
         Label l3 = new Label("price per unit - "+pricePerUnit);
         Button edit = new Button("edit");
+        HBox linkButtons = new HBox();
         Button link = new Button("link");
+        Button clearLinks = new Button("clear links");
+        clearLinks.setOnAction(event->{
+            linked.clear();
+        });
         link.setOnAction(event2->{
             Stage stage2 = new Stage();
             VBox root2 = new VBox();
             ToggleGroup toggleGroup = new ToggleGroup();
             Button submitToggle = new Button("submit");
             Collection<RadioButton> buttons = new ArrayList<RadioButton>();
-            for(Material mat : materials){
+            // for(Material mat : materials){
+            //     if (linked.contains(mat)) continue;
+            //     VBox tempV = new VBox();
+            //     RadioButton b1 = new RadioButton("id"+mat.getId() + " " + mat.getName());
+            //     buttons.add(b1);
+            //     b1.setId(String.valueOf(mat.getId()));
+            //     b1.setToggleGroup(toggleGroup);
+            //     tempV.getChildren().add(b1);
+            //     root2.getChildren().add(tempV);
+            // }
+            for (Expense e : expenses){
+                if (e == this) continue;
+                if (linked.contains(e)) continue;
                 VBox tempV = new VBox();
-                RadioButton b1 = new RadioButton("id"+mat.getId() + " " + mat.getName());
+                RadioButton b1 = new RadioButton("id"+e.getId() + " " + e.getName());
                 buttons.add(b1);
-                b1.setId(String.valueOf(mat.getId()));
+                b1.setId(String.valueOf(e.getId()));
                 b1.setToggleGroup(toggleGroup);
                 tempV.getChildren().add(b1);
                 root2.getChildren().add(tempV);
             }
-            for(Production prod : productions){
-                VBox tempV = new VBox();
-                RadioButton b1 = new RadioButton("id"+prod.getId() + " " + prod.getName());
-                buttons.add(b1);
-                b1.setId(String.valueOf(prod.getId()));
-                b1.setToggleGroup(toggleGroup);
-                tempV.getChildren().add(b1);
-                root2.getChildren().add(tempV);
-            }
+            // for(Production prod : productions){
+            //     if (prod == this) continue;
+            //     if (linked.contains(prod)) continue;
+            //     VBox tempV = new VBox();
+            //     RadioButton b1 = new RadioButton("id"+prod.getId() + " " + prod.getName());
+            //     buttons.add(b1);
+            //     b1.setId(String.valueOf(prod.getId()));
+            //     b1.setToggleGroup(toggleGroup);
+            //     tempV.getChildren().add(b1);
+            //     root2.getChildren().add(tempV);
+            // }
             submitToggle.setOnAction(event3->{
                 for (RadioButton b : buttons){
                     if (b.isSelected()){
-                        Integer tempId = Integer.parseInt(b.getId());
-                        for (Production p : productions){
-                            if (p.elemId == tempId){
-                                if (linked.contains(p)){
+                        String tempId = b.getId();
+                        for (Expense e : expenses){
+                            if (e.getId() == tempId){
+                                if (linked.contains(e)){
                                     Alert error = new Alert(AlertType.ERROR, "Already linked", ButtonType.OK);
                                     error.showAndWait();
                                     stage2.close();
                                     break;
                                 }
-                                if(p.elemId == elemId){
+                                if(e.getId() == elemId){
                                     Alert error = new Alert(AlertType.ERROR, "Cannot link element with itself", ButtonType.OK);
                                     error.showAndWait();
                                     stage2.close();
                                     break;
                                 }
-                                linked.add(p);
+                                linked.add(e);
                                 System.out.println(linked);
                             }
                         }
-                        for (Material m : materials){
-                            if (m.getId() == tempId){
-                                if (linked.contains(m)){
-                                    Alert error = new Alert(AlertType.ERROR, "Already linked", ButtonType.OK);
-                                    error.showAndWait();
-                                    stage2.close();
-                                    break;
-                                }
-                                linked.add(m);
-                                System.out.println(linked);
-                            }
-                        }
+                        // for (Production p : productions){
+                        //     if (p.elemId == tempId){
+                        //         if (linked.contains(p)){
+                        //             Alert error = new Alert(AlertType.ERROR, "Already linked", ButtonType.OK);
+                        //             error.showAndWait();
+                        //             stage2.close();
+                        //             break;
+                        //         }
+                        //         if(p.elemId == elemId){
+                        //             Alert error = new Alert(AlertType.ERROR, "Cannot link element with itself", ButtonType.OK);
+                        //             error.showAndWait();
+                        //             stage2.close();
+                        //             break;
+                        //         }
+                        //         linked.add(p);
+                        //         System.out.println(linked);
+                        //     }
+                        // }
+                        // for (Material m : materials){
+                        //     if (m.getId() == tempId){
+                        //         if (linked.contains(m)){
+                        //             Alert error = new Alert(AlertType.ERROR, "Already linked", ButtonType.OK);
+                        //             error.showAndWait();
+                        //             stage2.close();
+                        //             break;
+                        //         }
+                        //         linked.add(m);
+                        //         System.out.println(linked);
+                        //     }
+                        // }
                     }
                 }
                 stage2.close();
@@ -156,29 +212,42 @@ public class Production implements Expense {
             stage2.setScene(new Scene(root2));
             stage2.show();
         });
-        elem.setStyle("-fx-border-color:black;-fx-padding: 5px;-fx-border-insets: 5px;-fx-background-insets: 5px;");
+        edit.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#9c9c9c;-fx-border-color:#d6d6d6;");
+        link.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#9c9c9c;-fx-border-color:#d6d6d6;");
+        clearLinks.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#9c9c9c;-fx-border-color:#d6d6d6;");
+        elem.setStyle("-fx-background-color:#d4d4d4;-fx-border-width:1px;-fx-border-color:#9c9c9c;-fx-padding:5px;-fx-border-insets:5px;-fx-background-insets:5px;-fx-border-radius:5;-fx-background-radius:5;");
         
         elem.setOnMousePressed(event->{
-            ctx.mouseX = event.getX();
-            ctx.mouseY = event.getY();
+            ctx.mouseX = event.getSceneX();
+            ctx.mouseY = event.getSceneY();
             ctx.nodeX = elem.getTranslateX();
             ctx.nodeY = elem.getTranslateY();
+            ctx.screenX = elem.getScene().getWindow().getWidth();
+            ctx.screenY = elem.getScene().getWindow().getHeight();
+            System.out.println(ctx.screenX+" "+ctx.screenY);
         });
         elem.setOnMouseDragged(event->{
-            elem.setTranslateX(ctx.nodeX + event.getX() - ctx.mouseX);
-            elem.setTranslateY(ctx.nodeY + event.getY() - ctx.mouseY);
+            Double newX = ctx.nodeX + event.getSceneX() - ctx.mouseX;
+            Double newY = ctx.nodeY + event.getSceneY() - ctx.mouseY;
+            // if( newX < -20.0 ) newX = -20.0;
+            if( newY < -10.0 ) newY = -10.0;
+            // if( newX > ctx.screenX-175 ) newX = ctx.screenX-175;
+            // if( newY > ctx.screenY-185 ) newY = ctx.screenY-185;
+            elem.setTranslateX( newX );
+            elem.setTranslateY( newY );
         });
-        edit.setOnMouseClicked(event->{
+        edit.setOnAction(event->{
             edit(elem);
-            // elem.getChildren().clear();
-            // elem.getChildren().setAll(edit(elem));
         });
         elem.getChildren().add(idL);
         elem.getChildren().add(l);
         elem.getChildren().add(l2);
         elem.getChildren().add(l3);
         elem.getChildren().add(edit);
-        elem.getChildren().add(link);
+        linkButtons.getChildren().add(link);
+        linkButtons.getChildren().add(clearLinks);
+        elem.getChildren().add(linkButtons);
+        // elem.setPrefSize(elem.getHeight(), elem.getWidth());
 
         return elem;
     }
@@ -191,6 +260,10 @@ public class Production implements Expense {
         TextField t2 = new TextField("amount");
         TextField t3 = new TextField("price per unit");
         Button submit = new Button("submit");
+        String buttonColor = "d4d4d4";
+        String buttonBorderColor = "9c9c9c";
+        submit.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#"+buttonColor+";-fx-border-color:#"+buttonBorderColor+";");
+
         Label msg = new Label();
         t.setOnKeyPressed(event->{
             KeyCode code = event.getCode();
@@ -219,6 +292,10 @@ public class Production implements Expense {
             } else {
                 Production prod = new Production(text, Integer.parseInt(text2), Double.parseDouble(text3));
                 productions.add(prod);
+                expenses.add(prod);
+                for(Expense e : expenses){
+                    System.out.println(e.getId());
+                }
                 VBox elem = prod.getElem();
                 
                 body.getChildren().add(elem);
@@ -226,7 +303,7 @@ public class Production implements Expense {
                 mainStage.show();
             }
         });
-        root.setStyle("-fx-padding: 5px;-fx-border-insets: 5px;-fx-background-insets: 5px;");
+        root.setStyle("-fx-padding: 5px;-fx-border-insets: 5px;-fx-background-insets: 5px; -fx-border-radius: 3px;");
         root.getChildren().add(t);
         root.getChildren().add(t2);
         root.getChildren().add(t3);

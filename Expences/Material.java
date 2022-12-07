@@ -11,7 +11,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import java.util.Collection;
-import javafx.scene.Node;
 import java.io.DataOutputStream;
 import java.io.IOException;
 public class Material implements Expense {
@@ -21,10 +20,14 @@ public class Material implements Expense {
     public static Collection<Material> materials;
     public static Collection<Production> productions;
     static private Integer prodId = 0;
-    private Integer elemId;
+    private String elemId;
     protected DragContext ctx;
-    private VBox element;
     public static Stage mainStage;
+    public String getString(){
+        name = name.replace(" ", "_");
+        String result = "1 "+name+" "+price+" "+amount+" "+elemId+";";
+        return result;
+    }
     public static void setCollections(Collection<Material> newMats, Collection<Production> newProds){
         materials = newMats;
         productions = newProds;
@@ -32,10 +35,11 @@ public class Material implements Expense {
     public void sendToServer(DataOutputStream out){
         try
         {
-            out.writeInt(1);
-            out.writeUTF(name);
-            out.writeDouble(price);
-            out.writeInt(amount);
+            out.writeUTF(getString());
+            // out.writeInt(1);
+            // out.writeUTF(name);
+            // out.writeDouble(price);
+            // out.writeInt(amount);
         }
         catch(IOException e) {}
     }
@@ -48,19 +52,19 @@ public class Material implements Expense {
     public double getPrice(){
         return price;
     }
-    public Integer getId(){
+    public String getId(){
         return elemId;
     }
     public Material(){
-        elemId = prodId;
+        elemId = "M"+prodId;
         prodId++;
         name = "";
         price = 0;
         amount = 0;
         ctx = new DragContext();
     }
-    private Material(String newName, Double newPrice, int newAmount){
-        elemId = prodId;
+    public Material(String newName, Double newPrice, int newAmount){
+        elemId = "M"+prodId;
         prodId++;
         name = newName;
         price = newPrice;
@@ -74,33 +78,41 @@ public class Material implements Expense {
         Label l2 = new Label("price - "+price);
         Label l3 = new Label("amount - "+amount);
         Button edit = new Button("edit");
-        elem.setStyle("-fx-border-color:black;-fx-padding: 5px;-fx-border-insets: 5px;-fx-background-insets: 5px;");
+        edit.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#9c9c9c;-fx-border-color:#d6d6d6;");
+        elem.setStyle("-fx-background-color:#d4d4d4;-fx-border-width:1px;-fx-border-color:#9c9c9c;-fx-padding:5px;-fx-border-insets:5px;-fx-background-insets:5px;-fx-border-radius:5;-fx-background-radius:5;");
         
         elem.setOnMousePressed(event->{
-            ctx.mouseX = event.getX();
-            ctx.mouseY = event.getY();
+            ctx.mouseX = event.getSceneX();
+            ctx.mouseY = event.getSceneY();
             ctx.nodeX = elem.getTranslateX();
             ctx.nodeY = elem.getTranslateY();
+            ctx.screenX = elem.getScene().getWindow().getWidth();
+            ctx.screenY = elem.getScene().getWindow().getHeight();
+            System.out.println(ctx.screenX+" "+ctx.screenY);
         });
         elem.setOnMouseDragged(event->{
-            elem.setTranslateX(ctx.nodeX + event.getX() - ctx.mouseX);
-            elem.setTranslateY(ctx.nodeY + event.getY() - ctx.mouseY);
+            Double newX = ctx.nodeX + event.getSceneX() - ctx.mouseX;
+            Double newY = ctx.nodeY + event.getSceneY() - ctx.mouseY;
+            // if( newX < -20.0 ) newX = -20.0;
+            if( newY < -10.0 ) newY = -10.0;
+            // if( newX > ctx.screenX-175 ) newX = ctx.screenX-175;
+            // if( newY > ctx.screenY-185 ) newY = ctx.screenY-185;
+            elem.setTranslateX( newX );
+            elem.setTranslateY( newY );
         });
-        edit.setOnMouseClicked(event->{
+        edit.setOnAction(event->{
             edit(elem);
-            // elem.getChildren().clear();
-            // elem.getChildren().setAll(edit(elem));
         });
         elem.getChildren().add(idL);
         elem.getChildren().add(l);
         elem.getChildren().add(l2);
         elem.getChildren().add(l3);
         elem.getChildren().add(edit);
+        // elem.setPrefSize(elem.getHeight(), elem.getWidth());
 
         return elem;
     }
     public static void CreateElem(FlowPane body, Stage mainStage){
-        
         VBox root = new VBox();
         Stage stage = new Stage();
         
@@ -109,6 +121,10 @@ public class Material implements Expense {
         TextField t3 = new TextField("amount");
         Button submit = new Button("submit");
         Label msg = new Label();
+        String buttonColor = "d4d4d4";
+        String buttonBorderColor = "9c9c9c";
+        submit.setStyle("-fx-border-radius:25;-fx-background-radius:25;-fx-background-color:#"+buttonColor+";-fx-border-color:#"+buttonBorderColor+";");
+
         t.setOnKeyPressed(event->{
             KeyCode code = event.getCode();
             if (code.name() == "ENTER"){
@@ -133,8 +149,14 @@ public class Material implements Expense {
             String text3 = t3.getText();
             if(!text2.matches("^[\\d]+(\\.[\\d]+)?$")){
                 msg.setText("WRONG");
+            } else if(!text3.matches("^[\\d]+$")){
+                msg.setText("WRONG");
             } else {
                 Material prod = new Material(text, Double.parseDouble(text2), Integer.parseInt(text3));
+                expenses.add(prod);
+                for(Expense e : expenses){
+                    System.out.println(e.getId());
+                }
                 materials.add(prod);
                 VBox elem = prod.getElem();
                 

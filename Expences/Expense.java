@@ -12,9 +12,15 @@ package Expences;
 import javafx.scene.layout.VBox;
 import java.io.DataOutputStream;
 import java.util.Collection;
+import java.util.ArrayList;
 
 public interface Expense {
+    
+    public static Collection<Expense> expenses = new ArrayList<Expense>();
     public VBox getElem();
     public void sendToServer(DataOutputStream out);
+    public String getString();
+    public String getId(); 
+    public String getName(); 
     // public VBox edit(VBox elem);
 }

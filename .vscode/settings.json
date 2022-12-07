@@ -8,6 +8,7 @@
         "d:\\VScode\\JavaFX\\lib\\javafx.media.jar",
         "d:\\VScode\\JavaFX\\lib\\javafx.swing.jar",
         "d:\\VScode\\JavaFX\\lib\\javafx.web.jar",
-        "d:\\VScode\\JavaFX\\lib\\javafx-swt.jar"
+        "d:\\VScode\\JavaFX\\lib\\javafx-swt.jar",
+        "d:\\VScode\\lab5_server\\lib\\mysql-connector-j-8.0.31.jar"
     ]
 }
