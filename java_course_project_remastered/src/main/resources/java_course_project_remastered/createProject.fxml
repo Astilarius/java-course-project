@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ListView?>
+
+<VBox stylesheets="@app/createAccount.css" fx:id="root" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="java_course_project_remastered.CreateProjectController">
+   <children>
+      <Label text="Название проекта" />
+      <TextField fx:id="nameTF" />
+      <Label text="Является ли проект публичным?" />
+      <CheckBox fx:id="publicCB" />
+      <Label text="Список пользователей, которые могут изменять проект" />
+      <TextField fx:id="whiteListTF" onKeyPressed="#addToWhiteList"/>
+      <ListView fx:id="whiteListLV" onKeyPressed="#removeFromWhiteList"/>
+      <Button text="Подтвердить" onAction="#createProject"/>
+      <Button text="Назад" onAction="#switchToSecondary"/>
+      <Label text="" fx:id="msg"/>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

@@ -1,0 +1,14 @@
+.text-field{
+    -fx-max-width:300px;
+}
+
+.label{
+    -fx-font-size:20px;
+}
+
+.button{
+    -fx-border-radius:25px;
+    -fx-background-radius:25px;
+    -fx-background-color:#9c9c9c;
+    -fx-border-color:#d6d6d6;
+}

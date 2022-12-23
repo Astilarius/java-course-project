@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="java_course_project_remastered.ProjectManagerController">
+    <children>
+        <!-- <ScrollPane fx:id="sasd">
+            <content>
+                <VBox prefWidth="200" fx:id="myProjectBox" alignment="CENTER">
+                    <children>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane> -->
+        <Label text="Мои проекты:" />
+        <!-- <ScrollPane>
+            <content> -->
+                <VBox fx:id="myProjectBox" alignment="CENTER" spacing="20.0">
+                    <children>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </padding>
+                </VBox>
+            <!-- </content>
+        </ScrollPane> -->
+        <Label text="Публичные проекты:" />
+        <!-- <ScrollPane>
+            <content> -->
+                <VBox fx:id="publicProjectBox" alignment="CENTER" spacing="20.0">
+                    <children>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </padding>
+                </VBox>
+            <!-- </content>
+        </ScrollPane> -->
+        <Label text="Проекты, во которых вы указаны в 'Белом списке':" />
+        <!-- <ScrollPane>
+            <content> -->
+                <VBox fx:id="whitelistedProjectBox" alignment="CENTER" spacing="20.0">
+                    <children>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </padding>
+                </VBox>
+            <!-- </content>
+        </ScrollPane> -->
+        <Button text="Вернуться назад" onAction="#switchToSecondary" />
+        <Label text="" fx:id="msg"/>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>
