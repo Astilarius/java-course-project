@@ -22,15 +22,15 @@ public class ClientWindow extends Application {
     private FlowPane body = new FlowPane();;
     @Override
     public void start(Stage stage) {
-        Collection<Material> materials = new ArrayList<Material>();
-        Collection<Production> productions = new ArrayList<Production>();
+        // Collection<Material> materials = new ArrayList<Material>();
+        // Collection<Production> productions = new ArrayList<Production>();
         Material.mainStage = stage;
         Production.mainStage = stage;
-        Production.setCollections(materials, productions);
-        Material.setCollections(materials, productions);
+        // Production.setCollections(materials, productions);
+        // Material.setCollections(materials, productions);
         final Button loadProject = new Button("load project");
         loadProject.setOnAction(event->{
-            ProjectManager.manageServer(body, stage, materials, productions);
+            ProjectManager.manageServer(body, stage);
             stage.hide();
         });
         final Button materialButton = new Button("Add material");

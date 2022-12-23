@@ -17,8 +17,8 @@ public class Material implements Expense {
     private String name;
     private double price;
     private int amount;
-    public static Collection<Material> materials;
-    public static Collection<Production> productions;
+    // public static Collection<Material> materials;
+    // public static Collection<Production> productions;
     static private Integer prodId = 0;
     private String elemId;
     protected DragContext ctx;
@@ -28,10 +28,10 @@ public class Material implements Expense {
         String result = "1 "+name+" "+price+" "+amount+" "+elemId+";";
         return result;
     }
-    public static void setCollections(Collection<Material> newMats, Collection<Production> newProds){
-        materials = newMats;
-        productions = newProds;
-    }
+    // public static void setCollections(Collection<Material> newMats, Collection<Production> newProds){
+    //     materials = newMats;
+    //     productions = newProds;
+    // }
     public void sendToServer(DataOutputStream out){
         try
         {
@@ -157,7 +157,7 @@ public class Material implements Expense {
                 for(Expense e : expenses){
                     System.out.println(e.getId());
                 }
-                materials.add(prod);
+                // materials.add(prod);
                 VBox elem = prod.getElem();
                 
                 body.getChildren().add(elem);

@@ -50,7 +50,7 @@ public class ProdResult extends Production{
             }
         });
         link.setOnMouseClicked(event2->{
-            if (productions.size() > 0){
+            if (expenses.size() > 0){
                 Stage stage2 = new Stage();
                 VBox root2 = new VBox();
                 ToggleGroup toggleGroup = new ToggleGroup();

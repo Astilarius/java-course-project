@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.io.DataOutputStream;
 import java.io.IOException;
 public class Production implements Expense {
-    public static Collection<Material> materials;
-    public static Collection<Production> productions;
+    // public static Collection<Material> materials;
+    // public static Collection<Production> productions;
     protected Collection<Expense> linked;
     static private Integer prodId = 0;
     private String elemId;
@@ -41,10 +41,10 @@ public class Production implements Expense {
         result+=";";
         return result;
     }
-    public static void setCollections(Collection<Material> newMats, Collection<Production> newProds){
-        materials = newMats;
-        productions = newProds;
-    }
+    // public static void setCollections(Collection<Material> newMats, Collection<Production> newProds){
+    //     materials = newMats;
+    //     productions = newProds;
+    // }
     public void sendToServer(DataOutputStream out){
         try
         {
@@ -60,6 +60,9 @@ public class Production implements Expense {
             // out.writeDouble(pricePerUnit);
         }
         catch(IOException e) {}
+    }
+    public Collection<Expense> getLinked(){
+        return linked;
     }
     public String getName(){
         return name;
@@ -98,7 +101,10 @@ public class Production implements Expense {
         amount = newAmount;
         pricePerUnit = newPricePerUnit;
         ctx = new DragContext();
-        linked = newLinked;
+        linked = new ArrayList<Expense>();
+        for(Expense e : newLinked){
+            linked.add(e);
+        }
     }
     public VBox getElem(){
         VBox elem = new VBox();
@@ -291,7 +297,7 @@ public class Production implements Expense {
                 msg.setText("WRONG");
             } else {
                 Production prod = new Production(text, Integer.parseInt(text2), Double.parseDouble(text3));
-                productions.add(prod);
+                // productions.add(prod);
                 expenses.add(prod);
                 for(Expense e : expenses){
                     System.out.println(e.getId());

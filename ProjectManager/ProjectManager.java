@@ -24,7 +24,7 @@ import java.util.Collection;
 
 public class ProjectManager {
     
-    public static void manageServer(FlowPane body, Stage mainStage, Collection<Material> realM, Collection<Production> realP){
+    public static void manageServer(FlowPane body, Stage mainStage){
         VBox root = new VBox();
         Stage stage = new Stage();
 
@@ -56,7 +56,7 @@ public class ProjectManager {
                 final Label label = new Label("шв - "+tempI+", name - "+tempS+" price - "+tempD );
                 final Button open = new Button("open");
                 open.setOnAction(event->{
-                    processDataString(tempS2, body, realM, realP);
+                    processDataString(tempS2, body);
                     mainStage.show();
                     stage.close();
                 });
@@ -105,7 +105,7 @@ public class ProjectManager {
         }
     }
 
-    private static void processDataString(String dataString, FlowPane body, Collection<Material> realM, Collection<Production> realP){
+    private static void processDataString(String dataString, FlowPane body){
         Collection<Material> materials = new ArrayList<Material>();
         Collection<Production> productions = new ArrayList<Production>();
         Collection<Expense> tempLinked = new ArrayList<Expense>();
@@ -120,31 +120,51 @@ public class ProjectManager {
                 materials.add(tempM);
             } else if (elem.startsWith("2")){
                 String[] prodString = elem.split(" ");
-                String[] linkedString = prodString[4].split("\\|");
+                String[] linkedString = prodString[5].split("\\|");
+
+                // for(String test1 : prodString){
+                //     System.out.println("test1 "+test1);
+                // }
+                // for(String test2 : linkedString){
+                //     System.out.println("test2 "+test2);
+                // }
+
                 for(String linkedElemString : linkedString){
+                    System.out.println("linkedElemString "+linkedElemString);
                     if (linkedElemString.startsWith("M")){
+                        System.out.println("materials.size "+materials.size());
                         materials.forEach(linkedMat->{
+                            System.out.println(linkedElemString+" == "+linkedMat.getId()+" = "+linkedMat.getId() == linkedElemString);
                             if(linkedMat.getId() == linkedElemString){
                                 tempLinked.add(linkedMat);
                             }
                         });
                     } else if (linkedElemString.startsWith("P")){
+                        System.out.println("productions.size "+productions.size());
                         productions.forEach(linkedProd->{
+                            System.out.println(linkedElemString+" == "+linkedProd.getId()+" = "+linkedProd.getId() == linkedElemString);
                             if(linkedProd.getId() == linkedElemString){
                                 tempLinked.add(linkedProd);
                             }
                         });
                     }
                 }
-                Production tempM = new Production(prodString[1], Integer.parseInt(prodString[3]), Double.parseDouble(prodString[2]), tempLinked);
+                Production tempP = new Production(prodString[1], Integer.parseInt(prodString[3]), Double.parseDouble(prodString[2]), tempLinked);
+                System.out.println("temp linked - "+tempLinked.size());
+                System.out.println("linked - "+tempP.getLinked().size());
                 tempLinked.clear();
-                body.getChildren().add(tempM.getElem());
-                productions.add(tempM);
+                body.getChildren().add(tempP.getElem());
+                productions.add(tempP);
             }
         }
         ProdResult finalRes = new ProdResult();
-        body.getChildren().add(finalRes.getProdRes());
-        realM = materials;
-        realP = productions;
+        body.getChildren().add(finalRes.getProdRes());                        
+        Expense.expenses.clear();
+        for(Material m : materials){
+            Expense.expenses.add(m);
+        }
+        for(Production p : productions){
+            Expense.expenses.add(p);
+        }
     }
 }
